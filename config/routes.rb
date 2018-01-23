@@ -20,6 +20,7 @@ AdoptADrain::Application.routes.draw do
     put 'update' => 'users#update'
   end
 
+
   get 'address' => 'addresses#show', :as => 'address'
   get 'address_report' => 'addresses#report'
   get 'tos' => 'main#tos'
@@ -53,6 +54,8 @@ AdoptADrain::Application.routes.draw do
       post '/users/verify' => 'users#verify_leader'
       post '/users/deny' => 'users#deny'
       post '/users/remind' => 'users#remind'
+      get 'users/ussd_user/:sms_number' => 'users#ussd_user'
+      
       resources :users, only: [:index, :create, :show, :update, :destroy]
 
       get '/drains/data' => 'drains#data'
