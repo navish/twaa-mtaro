@@ -54,8 +54,7 @@ AdoptADrain::Application.routes.draw do
       post '/users/verify' => 'users#verify_leader'
       post '/users/deny' => 'users#deny'
       post '/users/remind' => 'users#remind'
-      get 'users/ussd_user/:sms_number' => 'users#ussd_user'
-      
+      post 'users/ussd_user/:sms_number' => 'users#ussd_user'      
       resources :users, only: [:index, :create, :show, :update, :destroy]
 
       get '/drains/data' => 'drains#data'
@@ -75,6 +74,10 @@ AdoptADrain::Application.routes.draw do
 
       get 'wards/:id/streets' => 'wards#streets'
       resources :wards,only: [:index, :create, :show, :update, :destroy]
+      
+      post 'user_claims/:user_id' =>'drain_claims#show'
+      post 'claims/' =>'drain_claims#index'
+      resources :drain_claims, only: [:index, :show]
 
     end
   end
