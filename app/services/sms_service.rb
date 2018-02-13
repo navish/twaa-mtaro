@@ -1,25 +1,35 @@
 class SmsService
   def initialize()
   	@account_sid = ENV['SMS_ACCOUNT_SID']
-	@auth_token = ENV['SMS_AUTH_TOKEN']
+	  @auth_token = ENV['SMS_AUTH_TOKEN']
     @from_number = ENV['SMS_FROM_PHONE_NUMBER']
-	@client = Twilio::REST::Client.new @account_sid, @auth_token
-
+	  @client = Twilio::REST::Client.new @account_sid, @auth_token
   end
 
+
+  # Send sms to the specified number
   def send_sms(content, tonumber)
-	# set up a client to talk to the Twilio REST API
-	tonumber = format(tonumber);
-	
-	@client.messages.create({
-	  :from => @from_number,
-	  :to => tonumber,
-	  :body => content,
-	})
+    tonumber = format(tonumber);
+
+  	begin
+      @client.messages.create({
+  	  :from => @from_number,
+  	  :to => tonumber,
+  	  :body => content,
+      })
+    rescue Twilio::REST::RequestError => e
+      message =  I18n.t("errors.sms_not_sent")
+    else
+      message = I18n.t("notice.success")
+    end
+
+    return message
+
   end
 
+  
+  # Loop over messages and print out a property for each one
   def new_sms_updates(content, tonumber)
-	# Loop over messages and print out a property for each one
 	@client.messages.list.each do |message|
 	Rails.logger.debug(message.body)
 	end
@@ -75,7 +85,7 @@ class SmsService
 	return content
   end
 
-  # Create the require response after updates in the model
+  # Create the required response after updates in the model
   # Params: user User, drain_status Array or String
   # returns: String
 
@@ -85,7 +95,8 @@ class SmsService
     dirt_keywords = ['mchafu', 'Mchafu', 'dirty', 'Dirty',
        'not clean', 'Not clean'].map(&:downcase)
     need_help_keywords = ['msaada','Msaada', 'need help', 'Need help'].map(&:downcase)
-    street_leader = User.find_by_role_and_street_id(2, user.street_id)
+    street_leader = User.joins(:roles).where(roles: {id: 2})
+                        .find_by_street_id(user.street_id)
 
     if user
       drain_status = categorize_sms_content(drain_status)
@@ -106,59 +117,82 @@ class SmsService
       end
       drain_status = drain_status.downcase
 
-        unless drain_claim.blank?
-          if (clean_keywords.include? drain_status)
-            change_locale(clean_keywords, drain_status)
+        if (clean_keywords.include? drain_status)
+          change_locale(clean_keywords, drain_status)
+          if (drain_claim)
             drain_claim.shoveled = true
-            if(user.id == street_leader.id)
-              drain = Drain.find_by_gid(drain_claim.try(:gid))
-              drain.cleared = true
-              drain.save(validate: false)
-            end
-            # drain.need_help = false
+          end
+          drain = Drain.find_by_gid(drain_id)
+          if(updates_authentication(user, drain))
+            drain.cleared = true
+            drain.save(validate: false)
             message = I18n.t('messages.drain_cleaned')
+          else
+            if (drain_claim)
+              if (drain_claim.save(validate: false))
+                message = I18n.t('messages.thanks')
+              else
+                message = I18n.t('messages.error')
+              end
+            else
+              message = I18n.t('messages.drain_unknown')
+            end
+          end
+          # drain.need_help = false
 
-          elsif (dirt_keywords.include? drain_status)
-            change_locale(dirt_keywords, drain_status)
+        elsif (dirt_keywords.include? drain_status)
+          change_locale(dirt_keywords, drain_status)
+          if (drain_claim)
             drain_claim.shoveled = false
-            if(user.id == street_leader.id)
-              drain = Drain.find_by_gid(drain_claim.try(:gid))
-              drain.cleared = false
-              drain.save(validate: false)
-            end
-            # drain.need_help = false
+          end
+
+          drain = Drain.find_by_gid(drain_id)
+          if(updates_authentication(user, drain))
+            drain.cleared = false
+            drain.save(validate: false)
             message = I18n.t('messages.drain_dirty')
-
-          elsif (need_help_keywords.include? drain_status)
-            change_locale(need_help_keywords, drain_status)
-
-            # drain_claim.shoveled = false
-            # drain.need_help = true
-            if(user.id == street_leader.id)
-              need_help = {
-                        'help_needed': "",
-                        'need_help_category_id': 1,
-                        'user_id': user.id,
-                        'gid': drain_claim.try(:gid)
-                    }
-                @need_help = NeedHelp.new(need_help)
-                if @need_help.save
-                   drain.need_help = true
-                end
+          else
+             if (drain_claim)
+              if (drain_claim.save(validate: false))
+                message = I18n.t('messages.thanks')
+              else
+                message = I18n.t('messages.error')
+              end
+            else
+              message = I18n.t('messages.drain_unknown')
             end
-            message = I18n.t('messages.thanks')
-          else
-            message = I18n.t('messages.unknown')
           end
-
-          if (drain_claim.save(validate: false))
-
-          else
-            message = I18n.t('messages.error')
-          end
-
         else
-          message = I18n.t('messages.drain_unknown')
+          message = I18n.t('messages.unknown')
+        end
+
+
+        if (need_help_keywords.include? drain_status)
+          change_locale(need_help_keywords, drain_status)
+          
+          # drain_claim.shoveled = false
+          # drain.need_help = true
+          drain = Drain.find_by_gid(drain_id)
+          puts updates_authentication(user, drain);
+          if(updates_authentication(user, drain))
+            need_help = {
+                      'help_needed': '',
+                      'need_help_category_id': 4,
+                      'user_id': user.id,
+                      'gid': drain.id
+            }
+            @need_help = NeedHelp.new(need_help)
+            if (@need_help.save(validate: true))
+              drain.need_help = true
+              drain.save(validate: false)
+              message = I18n.t('messages.need_help_thanks')
+            else
+              message = I18n.t('messages.need_help_error')
+            end
+          else
+            message = I18n.t('messages.need_help_user_error')
+          end
+          
         end
     else
       message = I18n.t('messages.user_not_found', :site => I18n.t('defaults.site'));
@@ -174,4 +208,15 @@ class SmsService
       I18n.locale = 'en'
     end
   end
+
+  # def updates_authentication(user, drain)
+  #   if user.present? && drain.present?
+  #     if user.has_role(2)
+  #       if drain.has_street(user.try(:street_id))
+  #         return true
+  #       end
+  #     end
+  #   end
+  #   return false
+  # end
 end

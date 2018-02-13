@@ -1,5 +1,18 @@
 # Please maintain alphabetical order
 sw:
+  activerecord:
+    attributes:
+      user:
+        email: "Barua pepe"
+        sms_number: "Namba ya simu"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+             taken: "imesha tumika tayari"
+            sms_number:
+              taken: "imesha tumika"
   buttons:
     abandon: "kuachana na hii %{thing}"
     adopt: "Twaa!"
@@ -11,6 +24,7 @@ sw:
     continue: "Endelea"
     cleaned: '%{count} Misafi'
     clean: 'Msafi'
+    claim_clean: 'Amesafisha?'
     dirty: "Sio msafi"
     edit_profile: "Hariri wasifu"
     email_password: "Ntumie nenosiri kwenye barua pepe"
@@ -32,6 +46,7 @@ sw:
     all: "%{count} Yote"
     adopted: "%{count} Imetwaaliwa"
     not_adopted: "%{count} Haijatwaaliwa"
+    flood_prone: "%{count} Korofi"
   captions:
     add_user: "Sajili Mpya"
     adopted: "Onesha %{thing} wako utakaosafisha msimu huu"
@@ -81,13 +96,17 @@ sw:
     status: "Hali"
     actions: "Ondoa"
     site: "http://twaamtaro.org"
+    priority: "Huu ni mtaro korofi"
   errors:
     error: "Drain"
     auth_failed: "Namba ya mtumiaji or nenosiri sio sahihi."
     drain_notfound: "%{error} haupo "
+    messages:
+      not_saved: "Kuna matatizo yanazuia usajili wako"
     password: "Unahitaji kuingia au kusajili kabla ya kuendelea"
     not_found: "Haijawezekana kupata %{thing} "
     adopted_error: " Je una %{thing} yakutosha kwa ajili ya kusafisha! Kama unapenda kuongeza %{thing} mingine, Tafadhali tuma omba lako kwenda www.twaamtaro.org"
+    sms_not_sent: "Meseji haijaenda, namba ya mtumiaji inaweza kuwa imekosewa"
   forms:
     need_help: "tuambie ni msaada gani ungehitaji"
     need_help_category: "Aina ya Msaada:"
@@ -138,6 +157,7 @@ sw:
     reply: "Umeuwekea alama ya mtaro namba kuwa"  
     clear_status: "msafi"
     dirt_status: "sio msafi"
+    flood_prone_status: "korofi"
     drain_share: "shirikisha"
     drain_cleaned: "Asante, kwa kutoa taarifa kuwa mtaro ni msafi."
     drain_dirty: "Asante, kwa kutoa taarifa kuwa mtaro ni mchafu."
@@ -151,6 +171,9 @@ sw:
     leader_notify: "Umefanikiwa kubadilisha alama ya mtaro %{id} kuwa %{status}."
     leader_to_user: "Kiongozi wako wa mtaa amebadilisha mtaro wako namba %{id} kuwa %{status}."
     user_not_found: "Samahani atuifahamu akaunti yako, tafadhali jisajili hapa %{site}"
+    need_help_error: "Kuna tatizo kwenye kupokea taarifa yako, jaribu tena baadae."
+    need_help_thanks: "Asante kwa taarifa yako, taarifa hizi zimeshafika kwa manispaa na kiongozi wa kata husika."
+    need_help_user_error: "Kiongozi wa mtaa pekee ndiye anayeruhusiwa kuomba msaada"
   notices:
     abandoned: "%{thing} kutelekezwa!"
     adopted: "Umechukua %{thing}!"
@@ -171,6 +194,13 @@ sw:
     yes_value: "Ndio"
     no_value: "Hapana"
     user_not_found: "Hatukuweza kutambua akaunti yako, unaweza kujiunga hap %{site}"
+    success: "Imefanikiwa"
+  role:
+    citizen: "Mwananchi"
+    community_member: "Kujitolea"
+    veo: "Kiongozi ngazi ya mtaa"
+    weo: "Kiongozi ngazi ya kata"
+    meo: "Kiongozi ngazi ya manispaa"
   tables:
     need_help: "Msaada"
     need_help_details:
@@ -178,6 +208,8 @@ sw:
       leader_name: "Jina la kiongozi wa mtaa"
       street: "Jina la mtaa"
       title: "Maelezo ya misaada/msaada unaohitajika"
+      edit: "Rekebisha"
+      delete: "Futa"
   terms:
     list_one: "Tovuti hii haipo  kwa ajili ya matumizi yoyote ya taarifa  yasiyofaa au yasiyosahihi ,"
     list_two: "Hakuna wajibu wa mtu yeyote kutumia taarifa hizi,"
@@ -192,6 +224,7 @@ sw:
     main: "Twaa %{thing}"
     edit_profile: "Hariri wasifu kwenye"
     need_help: "Eleza msaada unaohitaji"
+    need_help_edit: "Fanya marekebisho ya ombi lako"
     ofline: "wa %{organization}"
     thank_you: " Asante kwa kutwaa huu %{thing}!"
     register_now: "Jisajili sasa!"
@@ -203,6 +236,10 @@ sw:
     drain_details: "Taarifa za Mtaro"
     site_share_message: "Twaa mtaro | Dar es salaam"
     drain_share_message: "%{username} anasafisha mtaro unaopatikana %{address}"
+    drain_is_clean: "Mtaro huu ni msafi"
+    drain_is_dirty: "Mtaro huu ni mchafu"
+    drain_need_help: "Mtaro huu unahitaji msaada"
+    drain_unknown: "Hali ya mtaro huu haijulikani"
   sponsors:
     cfa: "code za Tanzania"   # FIXME
     city: "Mji  wa Dar es Salaam"    # FIXME

@@ -1,16 +1,8 @@
 %h3= t("tables.need_help_details.title")
+= render 'table'
 
-%table.font_12.pen_gray.link_1.page
-  %thead
-    %tr
-      %th= t("tables.need_help_details.help_needed")
-      %th= t("tables.need_help_details.street")
-      %th= t("tables.need_help_details.leader_name")
-  %tbody
-  - @need_helps.each do |need_help|
-    %tr
-      %td= need_help.help_needed
-      %td= need_help.user.street.street_name
-      %td= need_help.user.fullname
+\|
+%a{:id => "table_back", :class => "popup_link"}
+  = t("buttons.back")
 
 %br

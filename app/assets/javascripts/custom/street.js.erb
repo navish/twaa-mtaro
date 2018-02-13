@@ -11,9 +11,6 @@ $(function () {
         });
 
 
-
-
-
     /* adding a drains to a street*/
 $('body').on('click','#add_drain', function() {
     var gid = $(this).attr('gid');
@@ -28,7 +25,7 @@ $('body').on('click','#add_drain', function() {
         error: function (err) {
         },
         success: function (data) {
-            fetchDrainInfo(gid, drain_pos)
+            fetchDrainInfo(gid, drain_pos, "update")
         }
     });
 });

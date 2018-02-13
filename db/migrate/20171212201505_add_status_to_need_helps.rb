@@ -1,5 +1,8 @@
 class AddStatusToNeedHelps < ActiveRecord::Migration
   def change
-    add_column :need_helps, :status, :string
+  	change_table :need_helps do |t|
+  		t.string :need_helps
+  		t.string :status
+  	end
   end
 end
