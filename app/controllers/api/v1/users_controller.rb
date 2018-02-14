@@ -20,14 +20,9 @@ class Api::V1::UsersController < Api::V1::BaseController
   end
 
   def ussd_user
-    user = User.where(sms_number: params[:sms_number])
-    render(
-      json: ActiveModel::ArraySerializer.new(
-        user,
-        each_serializer: Api::V1::UserSerializer,
-        root: 'user',
-      )
-    )
+    user = User.where(sms_number: params[:sms_number]).first
+    render(json: Api::V1::UserSerializer.new(user).to_json)
+
   end
 
   def remind
