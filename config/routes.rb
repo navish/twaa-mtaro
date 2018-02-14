@@ -79,6 +79,7 @@ AdoptADrain::Application.routes.draw do
       
       post 'user_claims/:user_id' =>'drain_claims#show'
       post 'claims/' =>'drain_claims#index'
+      post 'claims/cleaned' =>'drain_claims#cleanliness_update'
       resources :drain_claims, only: [:index, :show]
 
     end
